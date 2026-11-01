@@ -16,14 +16,16 @@ timezone: Asia/Tehran
 
 title: Chirpy # the main title
 
-tagline: A text-focused Jekyll theme # it will display as the subtitle
+tagline: Threat Detection, Malware Analysis & Low-Level Internals
+Bridging Low-Level Reverse Engineering & Threat Hunting
+Analyzing Threats from Register State to Detection Logic # it will display as the subtitle
 
 description: >- # used by seo meta and the atom feed
   Technical write-ups on low-level Windows internals, binary analysis, and threat detection.
 
 # Fill in the protocol & hostname for your site.
 # E.g. 'https://username.github.io', note that it does not end with a '/'.
-url: ""
+url: "https://mohammadmh121.github.io"
 
 github:
   username: mohammadmh121 # change to your GitHub username
@@ -40,7 +42,7 @@ social:
   links:
     # The first element serves as the copyright owner's link
     -  # change to your Twitter homepage
-    - https://github.com/mohammadmh # change to your GitHub homepage
+    - https://mohammadmh121.github.io # change to your GitHub homepage
     # Uncomment below to add more social links
     # - https://www.facebook.com/username
     # - https://www.linkedin.com/in/username
