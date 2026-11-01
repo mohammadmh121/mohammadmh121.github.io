@@ -23,17 +23,12 @@ social:
     - https://github.com/mohammadmh121
     - https://www.linkedin.com/in/mohammad-haghighat-51b047219/
 
-# Theme & Core Plugins
+# Theme
 theme: jekyll-theme-chirpy
-plugins:
-  - jekyll-paginate
-  - jekyll-sitemap
-  - jekyll-feed
-  - jekyll-seo-tag
 
 paginate: 10
 
-# Syntax Highlighting for Reverse Engineering & Code
+# Syntax Highlighting for Code & Disassembly
 kramdown:
   syntax_highlighter: rouge
   syntax_highlighter_opts:
