@@ -1,4 +1,61 @@
----
-layout: home
-# Index page
----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beyond Process Creation: Reverse Engineering Windows Process Reflection</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+  <style>
+    body {
+      background-color: #0d1117;
+      color: #c9d1d9;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.75;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+    nav {
+      display: flex;
+      justify-content: space-between;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid #30363d;
+    }
+    nav a { color: #58a6ff; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+    h1, h2, h3 { color: #f0f6fc; margin-top: 2rem; }
+    h1 { border-bottom: 1px solid #30363d; padding-bottom: 0.5rem; }
+    code { background: #161b22; padding: 0.15rem 0.4rem; border-radius: 4px; font-family: Consolas, monospace; }
+    pre { background: #161b22; border: 1px solid #30363d; padding: 1rem; border-radius: 6px; overflow-x: auto; }
+    pre code { background: none; padding: 0; }
+    img { max-width: 100%; border-radius: 6px; border: 1px solid #30363d; margin: 1.5rem 0; display: block; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/">&larr; Back to Home</a>
+    <a href="https://github.com/mohammadmh121/ReflectionHunter" target="_blank">GitHub Code &amp; Rules &rarr;</a>
+  </nav>
+  <article id="content">Loading article...</article>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>
+    fetch('article.md')
+      .then(res => {
+        if (!res.ok) throw new Error('article.md not found');
+        return res.text();
+      })
+      .then(md => {
+        md = md.replace(/!\[\[(.*?)\]\]/g, '![$1](images/$1)');
+        const container = document.getElementById('content');
+        container.innerHTML = marked.parse(md);
+        container.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+      })
+      .catch(err => {
+        document.getElementById('content').innerText = 'Error loading article: ' + err.message;
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+index=Win_Sysmon (EventCode IN (8, 10) OR EventID IN (8, 10))
+| eval NormEventID = coalesce(EventID, EventCode)
+| eval NormSourceGuid = lower(coalesce(SourceProcessGuid, SourceProcessGUID))
+| eval NormTargetGuid = lower(coalesce(TargetProcessGuid, TargetProcessGUID))
+| eval AccessInt = tonumber(replace(GrantedAccess, "^0x", ""), 16)
+| eval HasCoreReflectionBits = if(NormEventID=10 AND AccessInt!=2097151 AND bit_and(AccessInt, 74) == 74 AND (bit_and(AccessInt, 1024) == 1024 OR bit_and(AccessInt, 4096) == 4096), 1, 0)
+| eval IsUnexportedNtdllThread = if(NormEventID=8 AND match(StartModule, "(?i)\\\\ntdll\.dll$") AND (isnull(StartFunction) OR StartFunction=="-" OR StartFunction==""), 1, 0)
+| where HasCoreReflectionBits=1 OR IsUnexportedNtdllThread=1
+| stats earliest(_time) as FirstSeen, latest(_time) as LastSeen,
+        dc(NormEventID) as UniqueEvents,
+        values(NormEventID) as EventIDs,
+        values(GrantedAccess) as GrantedAccessMasks,
+        values(StartAddress) as ThreadStartAddresses,
+        values(SourceImage) as InitiatorImage,
+        values(TargetImage) as ReflectedTargetImage
+        by NormSourceGuid, NormTargetGuid, host
+| eval TimeDelta = LastSeen - FirstSeen
+| where UniqueEvents == 2 AND TimeDelta >= 0 AND TimeDelta <= 5
+| search NOT InitiatorImage IN ("C:\\Windows\\System32\\WerFault.exe", "C:\\Windows\\SysWOW64\\WerFault.exe", "C:\\Windows\\System32\\WerFaultSecure.exe")
+| table FirstSeen, host, InitiatorImage, ReflectedTargetImage, GrantedAccessMasks, ThreadStartAddresses, TimeDelta

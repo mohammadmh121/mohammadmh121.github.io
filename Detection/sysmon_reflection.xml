@@ -1,0 +1,21 @@
+<Sysmon schemaversion="4.90">
+  <HashAlgorithms>sha256</HashAlgorithms>
+  <EventFiltering>
+    <RuleGroup name="ReflectionLab" groupRelation="or">
+      <ProcessCreate onmatch="include">
+        <Image condition="contains">ReflectionTelemetrySim.exe</Image>
+        <Image condition="end with">notepad.exe</Image>
+        <ParentImage condition="contains">ReflectionTelemetrySim.exe</ParentImage>
+        <ParentImage condition="end with">notepad.exe</ParentImage>
+      </ProcessCreate>
+      <CreateRemoteThread onmatch="include">
+        <SourceImage condition="contains">ReflectionTelemetrySim.exe</SourceImage>
+        <TargetImage condition="end with">notepad.exe</TargetImage>
+      </CreateRemoteThread>
+      <ProcessAccess onmatch="include">
+        <SourceImage condition="contains">ReflectionTelemetrySim.exe</SourceImage>
+        <TargetImage condition="end with">notepad.exe</TargetImage>
+      </ProcessAccess>
+    </RuleGroup>
+  </EventFiltering>
+</Sysmon>

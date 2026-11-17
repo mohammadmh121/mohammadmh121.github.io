@@ -1,0 +1,74 @@
+title: Correlated Process Reflection Chain via RtlCreateProcessReflection
+id: 1598fb01-41ad-46ca-9c57-7592c1cc9408
+status: experimental
+description: >
+    Correlates known handle access mask variants for ntdll!RtlCreateProcessReflection
+    (Sysmon Event ID 10) followed by an unexported ntdll.dll remote thread
+    (Sysmon Event ID 8) between the same source and target processes.
+author: Mohammad Haghighat
+date: 2026-11-13
+tags:
+    - attack.defense_evasion
+    - attack.privilege_escalation
+    - attack.t1055
+correlation:
+    type: temporal_ordered
+    rules:
+        - reflection_handle_access
+        - reflection_remote_thread
+    group-by:
+        - SourceProcessGuid
+        - TargetProcessGuid
+    timespan: 5s
+falsepositives:
+    - Windows Error Reporting (WerFault.exe / WerFaultSecure.exe)
+    - Diagnostic tools calling PssCaptureSnapshot (Taskmgr.exe, SystemInformer.exe, ProcDump -r)
+level: high
+---
+name: reflection_handle_access
+id: 9f3c8d21-4a7b-4e19-8c2d-5e6f7a8b9c0d
+status: experimental
+logsource:
+    product: windows
+    service: sysmon
+detection:
+    selection_access:
+        EventID: 10
+        GrantedAccess|endswith:
+            - '04A'
+            - '44A'
+            - '45A'
+            - '46A'
+            - '47A'
+            - '4CA'
+            - '54A'
+            - 'C4A'
+    filter_wer:
+        SourceImage:
+            - 'C:\Windows\System32\WerFault.exe'
+            - 'C:\Windows\SysWOW64\WerFault.exe'
+            - 'C:\Windows\System32\WerFaultSecure.exe'
+    condition: selection_access and not filter_wer
+---
+name: reflection_remote_thread
+id: 7a1d4e62-3b9c-4d81-a5e0-1c2b3d4e5f6a
+status: experimental
+logsource:
+    product: windows
+    service: sysmon
+detection:
+    selection_thread_module:
+        EventID: 8
+        StartModule|endswith: '\ntdll.dll'
+    selection_thread_func:
+        - StartFunction:
+              - '-'
+              - ''
+              - 'RtlpProcessReflectionStartup'
+        - StartFunction: null
+    filter_wer:
+        SourceImage:
+            - 'C:\Windows\System32\WerFault.exe'
+            - 'C:\Windows\SysWOW64\WerFault.exe'
+            - 'C:\Windows\System32\WerFaultSecure.exe'
+    condition: selection_thread_module and selection_thread_func and not filter_wer
